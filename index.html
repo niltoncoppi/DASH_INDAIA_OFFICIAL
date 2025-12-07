@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DASH_INDAIA | Dashboard de Vendas</title>
     
-    <!-- Fonts: Inter for that modern SaaS look -->
+    <!-- Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,31 +17,24 @@
     <style>
         :root {
             /* --- Color Palette (Green SaaS Theme) --- */
-            
-            /* Primary Accents */
             --primary: #10b981;       /* Emerald 500 */
             --primary-dark: #047857;  /* Emerald 700 */
             --primary-light: #d1fae5; /* Emerald 100 */
             
-            /* Sidebar & Dark Elements */
             --sidebar-bg: #064e3b;    /* Deep Forest Green */
             --sidebar-hover: #065f46;
             --sidebar-text: #ecfdf5;
             
-            /* Backgrounds */
             --bg-body: #f3f4f6;       /* Gray 100 */
             --bg-card: #ffffff;
             
-            /* Text */
             --text-main: #111827;     /* Gray 900 */
             --text-secondary: #6b7280;/* Gray 500 */
             
-            /* Borders & Shadows */
             --border: #e5e7eb;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             
-            /* Dimensions */
             --sidebar-width: 260px;
             --header-height: 70px;
         }
@@ -192,39 +186,6 @@
             margin-top: 2px;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Search Bar Visual */
-        .search-box {
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-body);
-            border: 1px solid transparent;
-            border-radius: 8px;
-            padding: 8px 16px;
-            width: 280px;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            transition: 0.2s;
-        }
-        .search-box:focus-within {
-            background-color: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary-light);
-        }
-        .search-box i { margin-right: 10px; color: #9ca3af; }
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            color: var(--text-main);
-        }
-
         .timestamp {
             font-size: 0.75rem;
             font-weight: 600;
@@ -233,6 +194,63 @@
             padding: 6px 12px;
             border-radius: 20px;
         }
+
+        /* --- FILTER BAR --- */
+        .filter-bar {
+            background-color: white;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .filter-input, .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            outline: none;
+            background-color: #fff;
+            min-width: 140px;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .btn-filter {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: 38px;
+            margin-top: 18px; /* Align with inputs */
+        }
+
+        .btn-filter:hover { background-color: var(--primary-dark); }
+        .btn-filter i { margin-right: 8px; }
 
         /* --- SCROLL AREA --- */
         .scroll-container {
@@ -261,7 +279,6 @@
             margin-bottom: 40px;
         }
 
-        /* Card Style */
         .card {
             background: var(--bg-card);
             border-radius: 16px;
@@ -276,12 +293,8 @@
             overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
+        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
-        /* Colored Line Indicator on Left */
         .card::before {
             content: '';
             position: absolute;
@@ -308,7 +321,6 @@
             font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .icon-box {
@@ -321,7 +333,6 @@
             font-size: 1.1rem;
         }
 
-        /* Icon Colors */
         .ib-green { background: #ecfdf5; color: var(--primary); }
         .ib-blue { background: #eff6ff; color: #3b82f6; }
         .ib-purple { background: #faf5ff; color: #a855f7; }
@@ -346,7 +357,7 @@
         /* --- TABLES --- */
         .grid-tables {
             display: grid;
-            grid-template-columns: 3fr 2fr; /* 60/40 Split */
+            grid-template-columns: 3fr 2fr;
             gap: 24px;
         }
 
@@ -358,7 +369,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            height: 500px; /* Fixed height for scroll */
+            height: 500px;
         }
 
         .table-header {
@@ -370,22 +381,11 @@
             align-items: center;
         }
 
-        .table-title {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-main);
-        }
+        .table-title { font-weight: 700; font-size: 1rem; color: var(--text-main); }
 
-        .table-wrapper {
-            flex: 1;
-            overflow: auto;
-        }
+        .table-wrapper { flex: 1; overflow: auto; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 
         th {
             background: #f9fafb;
@@ -426,30 +426,26 @@
         .text-right { text-align: right; }
         .font-bold { font-weight: 600; }
 
-        .empty-state {
-            padding: 40px;
-            text-align: center;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
+        .empty-state { padding: 40px; text-align: center; color: var(--text-secondary); font-style: italic; }
 
-        /* --- RESPONSIVE --- */
         @media (max-width: 1200px) {
             .grid-tables { grid-template-columns: 1fr; }
             .table-card { height: auto; max-height: 500px; }
         }
         @media (max-width: 768px) {
-            .sidebar { display: none; } /* Simplified mobile view */
+            .sidebar { display: none; }
             .header { padding: 0 16px; }
             .scroll-container { padding: 16px; }
             .grid-dashboard { grid-template-columns: 1fr; }
+            .filter-bar { padding: 16px; flex-direction: column; align-items: stretch; }
+            .filter-input, .filter-select { width: 100%; }
         }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/"
   }
 }
@@ -460,7 +456,7 @@
     <!-- Loading Overlay -->
     <div id="loader">
         <div class="spinner"></div>
-        <p class="loader-text">Conectando ao Google Sheets...</p>
+        <p class="loader-text">Conectando ao banco de dados...</p>
     </div>
 
     <!-- Sidebar -->
@@ -487,7 +483,7 @@
             </a>
         </nav>
         <div class="sidebar-footer">
-            &copy; 2024 Indaia System v1.0
+            &copy; 2024 Indaia System v1.1
         </div>
     </aside>
 
@@ -499,18 +495,67 @@
                 <h1>Dashboard de Vendas</h1>
                 <p>Visão geral dos leads e desempenho comercial</p>
             </div>
-            <div class="header-actions">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Pesquisar campanha, vendedor...">
-                </div>
-                <div class="timestamp" id="lastUpdated">
-                    <i class="fa-regular fa-clock"></i> Atualizando...
-                </div>
+            <div class="timestamp" id="lastUpdated">
+                <i class="fa-regular fa-clock"></i> Atualizando...
             </div>
         </header>
 
-        <!-- Dashboard Body -->
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <!-- Period Shortcut -->
+            <div class="filter-group">
+                <label class="filter-label">Período</label>
+                <select id="f-shortcut" class="filter-select" onchange="applyDateShortcut(this.value)">
+                    <option value="today">Hoje</option>
+                    <option value="7d">Últimos 7 dias</option>
+                    <option value="15d">Últimos 15 dias</option>
+                    <option value="30d" selected>Últimos 30 dias</option>
+                    <option value="thisMonth">Este Mês</option>
+                    <option value="lastMonth">Mês Passado</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+
+            <!-- Custom Dates -->
+            <div class="filter-group">
+                <label class="filter-label">Início</label>
+                <input type="date" id="f-start" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Fim</label>
+                <input type="date" id="f-end" class="filter-input">
+            </div>
+
+            <!-- Campaign -->
+            <div class="filter-group">
+                <label class="filter-label">Campanha</label>
+                <select id="f-campaign" class="filter-select">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+
+            <!-- Seller -->
+            <div class="filter-group">
+                <label class="filter-label">Vendedor</label>
+                <select id="f-seller" class="filter-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+
+             <!-- Platform -->
+             <div class="filter-group">
+                <label class="filter-label">Plataforma</label>
+                <select id="f-platform" class="filter-select">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+
+            <button class="btn-filter" onclick="carregarDashboard()">
+                <i class="fa-solid fa-filter"></i> Filtrar
+            </button>
+        </div>
+
+        <!-- Body -->
         <div class="scroll-container">
             
             <!-- SECTION 1: Visão Geral -->
@@ -519,7 +564,6 @@
             </div>
             
             <div class="grid-dashboard">
-                <!-- Investimento -->
                 <div class="card accent-blue">
                     <div class="card-top">
                         <span class="card-label">Investimento Total</span>
@@ -531,7 +575,6 @@
                     </div>
                 </div>
 
-                <!-- Faturamento -->
                 <div class="card accent-green">
                     <div class="card-top">
                         <span class="card-label">Faturamento</span>
@@ -543,7 +586,6 @@
                     </div>
                 </div>
 
-                <!-- ROI -->
                 <div class="card accent-purple">
                     <div class="card-top">
                         <span class="card-label">ROI Global</span>
@@ -555,7 +597,6 @@
                     </div>
                 </div>
 
-                <!-- Vendas -->
                 <div class="card accent-orange">
                     <div class="card-top">
                         <span class="card-label">Vendas Totais</span>
@@ -574,7 +615,6 @@
             </div>
 
             <div class="grid-dashboard">
-                <!-- Leads Hoje -->
                 <div class="card accent-blue">
                     <div class="card-top">
                         <span class="card-label">Leads Hoje</span>
@@ -583,7 +623,6 @@
                     <div class="card-value" id="val-leads-hoje">0</div>
                 </div>
 
-                <!-- Leads Período -->
                 <div class="card accent-blue">
                     <div class="card-top">
                         <span class="card-label">Leads (Período)</span>
@@ -592,7 +631,6 @@
                     <div class="card-value" id="val-leads-periodo">0</div>
                 </div>
 
-                <!-- CPL -->
                 <div class="card accent-green">
                     <div class="card-top">
                         <span class="card-label">Custo por Lead (CPL)</span>
@@ -601,7 +639,6 @@
                     <div class="card-value" id="val-cpl">R$ 0,00</div>
                 </div>
 
-                <!-- CPA -->
                 <div class="card accent-green">
                     <div class="card-top">
                         <span class="card-label">Custo p/ Venda (CPA)</span>
@@ -614,13 +651,9 @@
             <!-- SECTION 3: Tables -->
             <div class="grid-tables">
                 
-                <!-- Campanhas Table -->
                 <div class="table-card">
                     <div class="table-header">
                         <span class="table-title">Performance por Campanha</span>
-                        <button style="border:none; background:none; color:var(--primary); cursor:pointer;">
-                            <i class="fa-solid fa-download"></i>
-                        </button>
                     </div>
                     <div class="table-wrapper">
                         <table id="tbl-campanhas">
@@ -634,9 +667,7 @@
                                     <th class="text-right">Conv. (%)</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- JS Populates Here -->
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                         <div id="msg-campanhas" class="empty-state" style="display:none;">
                             Nenhuma campanha encontrada no período.
@@ -644,7 +675,6 @@
                     </div>
                 </div>
 
-                <!-- Equipe Table -->
                 <div class="table-card">
                     <div class="table-header">
                         <span class="table-title">Ranking Comercial</span>
@@ -656,12 +686,10 @@
                                     <th>Vendedor</th>
                                     <th class="text-right">Leads</th>
                                     <th class="text-right">Contratos</th>
-                                    <th class="text-right">Conv.</th>
+                                    <th class="text-right">Fat.</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- JS Populates Here -->
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                         <div id="msg-vendedores" class="empty-state" style="display:none;">
                             Nenhum dado de vendas encontrado.
@@ -670,23 +698,87 @@
                 </div>
 
             </div>
-
         </div>
     </main>
 
-    <!-- JavaScript Logic -->
     <script>
-        // --- Formatters ---
+        // --- Globals ---
         const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
         const NUM = new Intl.NumberFormat('pt-BR');
         const DEC = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const PCT = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1 });
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
+            initFilters();
             carregarDashboard();
         });
 
+        // --- Filter Logic ---
+        function initFilters() {
+            // Set initial date shortcut (30 days)
+            applyDateShortcut('30d');
+            
+            // Load dropdown options from backend
+            if (typeof google !== 'undefined' && google.script) {
+                google.script.run.withSuccessHandler(populateDropdowns).getFilterOptions();
+            }
+        }
+
+        function populateDropdowns(data) {
+            if (!data || data.error) return;
+
+            const fillSelect = (id, list) => {
+                const sel = document.getElementById(id);
+                list.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.textContent = item;
+                    sel.appendChild(opt);
+                });
+            };
+
+            fillSelect('f-campaign', data.campanhas || []);
+            fillSelect('f-platform', data.plataformas || []);
+            fillSelect('f-seller', data.vendedores || []);
+        }
+
+        function applyDateShortcut(val) {
+            const end = new Date();
+            const start = new Date();
+            
+            if (val === 'today') {
+                // start = today
+            } else if (val === '7d') {
+                start.setDate(end.getDate() - 7);
+            } else if (val === '15d') {
+                start.setDate(end.getDate() - 15);
+            } else if (val === '30d') {
+                start.setDate(end.getDate() - 30);
+            } else if (val === 'thisMonth') {
+                start.setDate(1);
+            } else if (val === 'lastMonth') {
+                start.setMonth(start.getMonth() - 1);
+                start.setDate(1);
+                end.setDate(0); // Last day of prev month
+            } else {
+                return; // Custom
+            }
+
+            document.getElementById('f-start').valueAsDate = start;
+            document.getElementById('f-end').valueAsDate = end;
+        }
+
+        function getFilters() {
+            return {
+                startDate: document.getElementById('f-start').value,
+                endDate: document.getElementById('f-end').value,
+                campanha: document.getElementById('f-campaign').value,
+                plataforma: document.getElementById('f-platform').value,
+                vendedor: document.getElementById('f-seller').value
+            };
+        }
+
+        // --- Dashboard Logic ---
         function mostrarSpinner(show) {
             const loader = document.getElementById('loader');
             loader.style.opacity = show ? '1' : '0';
@@ -695,69 +787,53 @@
 
         function carregarDashboard() {
             mostrarSpinner(true);
+            const filters = getFilters();
 
-            // Check if running in GAS context
             if (typeof google === 'undefined' || !google.script) {
-                console.warn('Google Script context not found. Backend calls will fail locally.');
-                // In a real local dev scenario we might mock here, but the prompt asked for pure logic 
-                // ready for GAS. We'll show an alert after a timeout to prevent infinite load in dev.
-                setTimeout(() => {
-                    mostrarSpinner(false);
-                    alert("Atenção: Este painel precisa rodar dentro do Google Apps Script.");
-                }, 1500);
+                console.warn('Local Dev: Backend not available.');
+                setTimeout(() => mostrarSpinner(false), 1000);
                 return;
             }
 
             google.script.run
-                .withSuccessHandler(onSuccess)
+                .withSuccessHandler(renderDashboard)
                 .withFailureHandler(onFailure)
-                .getDashboardData(null); // Passing null as filters
+                .getDashboardData(filters);
         }
 
-        function onSuccess(data) {
+        function renderDashboard(data) {
             mostrarSpinner(false);
             
-            if (!data) {
-                alert('O servidor retornou vazio.');
-                return;
-            }
+            if (!data) return alert('O servidor retornou vazio.');
+            if (data.error) return alert('Erro do servidor: ' + data.message);
 
-            if (data.error) {
-                alert('Erro do servidor: ' + data.message);
-                return;
-            }
-
-            console.log("Dados recebidos:", data);
+            console.log("Dados filtrados:", data);
             
-            // 1. Update Timestamp
+            // Timestamp
             const now = new Date();
             document.getElementById('lastUpdated').innerHTML = 
-                `<i class="fa-regular fa-clock"></i> Atualizado: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+                `<i class="fa-regular fa-clock"></i> Atualizado: ${now.toLocaleTimeString()}`;
 
-            // 2. Overview Cards
-            // Keys come from Code.gs: totalInvestimento, faturamentoPeriodo, roiGlobal, roasGlobal, totalContratosPeriodo
+            // KPIs
             document.getElementById('val-investimento').textContent = BRL.format(data.totalInvestimento || 0);
             document.getElementById('val-faturamento').textContent = BRL.format(data.faturamentoPeriodo || 0);
             document.getElementById('val-roi').textContent = DEC.format(data.roiGlobal || 0);
             document.getElementById('val-roas').textContent = `ROAS: ${DEC.format(data.roasGlobal || 0)}x`;
             document.getElementById('val-vendas').textContent = NUM.format(data.totalContratosPeriodo || 0);
 
-            // 3. Funnel Cards
-            // Keys: totalLeadsHoje, leadsPeriodo, cplGlobal, cpaGlobal
             document.getElementById('val-leads-hoje').textContent = NUM.format(data.totalLeadsHoje || 0);
             document.getElementById('val-leads-periodo').textContent = NUM.format(data.leadsPeriodo || 0);
             document.getElementById('val-cpl').textContent = BRL.format(data.cplGlobal || 0);
             document.getElementById('val-cpa').textContent = BRL.format(data.cpaGlobal || 0);
 
-            // 4. Tables
-            // Keys: kpiCampanhas, kpiVendedores
+            // Tables
             renderTableCampanhas(data.kpiCampanhas || []);
             renderTableVendedores(data.kpiVendedores || []);
         }
 
         function onFailure(error) {
             mostrarSpinner(false);
-            alert('Falha ao conectar com a planilha: ' + error.message);
+            alert('Erro na comunicação: ' + error.message);
         }
 
         function renderTableCampanhas(lista) {
@@ -766,52 +842,29 @@
             const table = document.getElementById('tbl-campanhas');
 
             tbody.innerHTML = '';
-
             if (lista.length === 0) {
                 table.style.display = 'none';
                 msg.style.display = 'block';
                 return;
             }
-            
             table.style.display = 'table';
             msg.style.display = 'none';
 
             lista.forEach(item => {
                 const tr = document.createElement('tr');
-                
-                // Fields from Code.gs: CAMPANHA, PLATAFORMA, LEADS_TOTAL, CONTRATOS, CPL, CUSTO_POR_CONTRATO, TX_FECHAMENTO
-                // Note: Code.gs returns uppercase keys if it uses the header row directly, 
-                // OR it returns specific camelCase if the backend mapped it.
-                // Looking at Prompt 1 output: it mapped to camelCase? No, Prompt 1 Code.gs used getSheetDataAsObjects_ 
-                // which uses the header string as key. The headers in Sheet are uppercase (CAMPANHA, PLATAFORMA...).
-                // HOWEVER, the Prompt 1 Code.gs *return object* mapped `campanhasResumo` -> `kpiCampanhas` 
-                // but the `kpiCampanhas` const was just the raw object array from `getSheetDataAsObjects_`.
-                // So keys are UPPERCASE based on the sheet headers described in prompt 1.
-                
-                // Let's handle uppercase keys safely.
-                
+                // Campos: CAMPANHA, PLATAFORMA, LEADS_TOTAL, CONTRATOS, CPL, CUSTO_POR_CONTRATO, TX_FECHAMENTO
                 const leads = item.LEADS_TOTAL || 0;
                 const vendas = item.CONTRATOS || 0;
                 const cpa = item.CUSTO_POR_CONTRATO || 0;
-                
-                // Taxa Conversão
-                let tx = item.TX_FECHAMENTO;
-                if (tx === undefined || tx === '') {
-                    // Fallback calc
-                    tx = leads > 0 ? (vendas / leads) : 0;
-                }
+                let tx = item.TX_FECHAMENTO || (leads > 0 ? vendas/leads : 0);
 
                 tr.innerHTML = `
                     <td class="font-bold">${item.CAMPANHA || 'Desconhecido'}</td>
-                    <td><span class="status-pill" style="background:#f3f4f6;">${item.PLATAFORMA || '-'}</span></td>
+                    <td><span class="status-pill">${item.PLATAFORMA || '-'}</span></td>
                     <td class="text-right">${NUM.format(leads)}</td>
                     <td class="text-right">${NUM.format(vendas)}</td>
                     <td class="text-right">${BRL.format(cpa)}</td>
-                    <td class="text-right">
-                        <span class="status-pill ${tx >= 0.1 ? 'good' : 'warn'}">
-                            ${PCT.format(tx)}
-                        </span>
-                    </td>
+                    <td class="text-right"><span class="status-pill ${tx >= 0.1 ? 'good' : 'warn'}">${PCT.format(tx)}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -823,33 +876,22 @@
             const table = document.getElementById('tbl-vendedores');
 
             tbody.innerHTML = '';
-
             if (lista.length === 0) {
                 table.style.display = 'none';
                 msg.style.display = 'block';
                 return;
             }
-
             table.style.display = 'table';
             msg.style.display = 'none';
 
             lista.forEach(item => {
                 const tr = document.createElement('tr');
-                // Keys: VENDEDOR, LEADS, CONTRATOS, FATURAMENTO...
-                
-                const leads = item.LEADS || 0;
-                const vendas = item.CONTRATOS || 0;
-                const conv = leads > 0 ? (vendas / leads) : 0;
-
+                const fat = item.FATURAMENTO || 0;
                 tr.innerHTML = `
                     <td class="font-bold">${item.VENDEDOR || 'Vendedor'}</td>
-                    <td class="text-right">${NUM.format(leads)}</td>
-                    <td class="text-right">${NUM.format(vendas)}</td>
-                    <td class="text-right">
-                        <span class="status-pill ${conv >= 0.1 ? 'good' : 'warn'}">
-                            ${PCT.format(conv)}
-                        </span>
-                    </td>
+                    <td class="text-right">${NUM.format(item.LEADS || 0)}</td>
+                    <td class="text-right">${NUM.format(item.CONTRATOS || 0)}</td>
+                    <td class="text-right">${BRL.format(fat)}</td>
                 `;
                 tbody.appendChild(tr);
             });
