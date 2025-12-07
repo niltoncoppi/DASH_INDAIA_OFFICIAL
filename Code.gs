@@ -215,6 +215,7 @@ function doGet(e) {
       data: data,
     };
 
+    // Retorna JSON (CORS é configurado nas configurações do Web App)
     return ContentService.createTextOutput(
       JSON.stringify(response)
     ).setMimeType(ContentService.MimeType.JSON);
@@ -224,6 +225,7 @@ function doGet(e) {
       message: err && err.message ? err.message : String(err),
     };
 
+    // Retorna erro
     return ContentService.createTextOutput(
       JSON.stringify(errorResponse)
     ).setMimeType(ContentService.MimeType.JSON);

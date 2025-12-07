@@ -5,13 +5,16 @@
 // =========================
 
 export type DashboardFilters = {
-  periodo:
+  periodo?:
     | "hoje"
     | "ontem"
     | "ultimos_7_dias"
     | "ultimos_30_dias"
     | "mes_atual"
-    | "mes_anterior";
+    | "mes_anterior"
+    | string; // Permite strings customizadas também
+  inicio?: string; // "2025-12-01"
+  fim?: string; // "2025-12-31"
   campanha?: string;
   vendedor?: string;
   plataforma?: string;
