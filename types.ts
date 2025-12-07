@@ -1,8 +1,96 @@
+// types.ts
+
+// =========================
+//  FILTROS BÁSICOS
+// =========================
+
+export type DashboardFilters = {
+  periodo:
+    | "hoje"
+    | "ontem"
+    | "ultimos_7_dias"
+    | "ultimos_30_dias"
+    | "mes_atual"
+    | "mes_anterior";
+  campanha?: string;
+  vendedor?: string;
+  plataforma?: string;
+};
+
+// =========================
+//  OVERVIEW (cards grandes)
+// =========================
+
+export type OverviewData = {
+  investimentoTotal: number;
+  faturamentoTotal: number;
+  leadsTotal: number;
+  contratosTotal: number;
+  roas: number;
+  roi: number;
+  cpl: number;
+  cpa: number;
+};
+
+// =========================
+//  TABELA DE MÍDIA DIÁRIA
+// =========================
+
+export type MidiaRow = {
+  DATA: string;
+  ANO: number;
+  MES: number;
+  DIA: number;
+  PLATAFORMA: string;
+  CONTA_MIDIA: string;
+  PRODUTO: string;
+  SUB_PRODUTO: string;
+  CAMPANHA: string;
+  CONJUNTO: string;
+  ANUNCIO: string;
+  CANAL: string;
+  INVESTIMENTO_DIA: number;
+  LEADS_DIA: number;
+  OBSERVACAO: string;
+};
+
+// =========================
+//  RESUMO POR CAMPANHA
+// =========================
+
+export type CampanhaResumo = {
+  CAMPANHA: string;
+  PLATAFORMA: string;
+  PRODUTO: string;
+  SUBPRODUTO: string;
+
+  INVESTIMENTO_TOTAL: number;
+  LEADS_TOTAL: number;
+  CPL: number;
+  LEADS_CADASTRADOS: number;
+  AGENDADOS: number;
+  COMPARECEU: number;
+  CONTRATOS: number;
+  FATURAMENTO: number;
+
+  CUSTO_POR_AGENDAMENTO: number;
+  CUSTO_POR_CONTRATO: number;
+
+  TX_AGENDAMENTO: number | "";
+  TX_COMPARECIMENTO: number | "";
+  TX_FECHAMENTO: number | "";
+};
+
+// =========================
+//  PACOTE COMPLETO DE DADOS
+//  QUE VEM DO APPS SCRIPT
+// =========================
+
 export interface DashboardData {
   error: boolean;
   message?: string;
-  
-  // KPI Metrics
+
+  // KPI principais (cards grandes)
   totalLeadsHoje: number;
   leadsPeriodo: number;
   totalContratosPeriodo: number;
@@ -13,32 +101,10 @@ export interface DashboardData {
   roiGlobal: number;
   roasGlobal: number;
 
-  // Raw Data Arrays
+  // Arrays brutos (para tabelas, gráficos, etc.)
   midia: Record<string, any>[];
   leads: Record<string, any>[];
   vendas: Record<string, any>[];
   kpiCampanhas: Record<string, any>[];
   kpiVendedores: Record<string, any>[];
-}
-
-// Augment window to support Google Apps Script functions
-declare global {
-  interface Window {
-    google?: {
-      script: {
-        run: {
-          withSuccessHandler: (callback: (data: any) => void) => {
-            getDashboardData: () => void;
-            withFailureHandler: (callback: (error: Error) => void) => {
-              getDashboardData: () => void;
-            }
-          };
-          withFailureHandler: (callback: (error: Error) => void) => {
-            getDashboardData: () => void;
-          };
-          getDashboardData: () => void;
-        };
-      };
-    };
-  }
 }
