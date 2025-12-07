@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DASH_INDAIA | Dashboard de Vendas</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* Palette - Green SaaS Theme */
+            --primary: #10b981;       /* Emerald 500 */
+            --primary-dark: #059669;  /* Emerald 600 */
+            --primary-light: #d1fae5; /* Emerald 100 */
+            
+            --bg-body: #f3f4f6;       /* Gray 100 */
+            --bg-sidebar: #111827;    /* Gray 900 */
+            --bg-card: #ffffff;
+            
+            --text-main: #1f2937;     /* Gray 800 */
+            --text-secondary: #6b7280;/* Gray 500 */
+            --text-on-dark: #f9fafb;  /* Gray 50 */
+            
+            --border: #e5e7eb;        /* Gray 200 */
+            
+            /* Spacing */
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            
+            /* Transitions */
+            --trans-fast: 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden; /* Main scroll handles content */
+            display: flex;
+        }
+
+        /* --- Components: Spinner --- */
+        #loader {
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+        
+        .spinner-ring {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loader-text {
+            margin-top: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* --- Layout: Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: width var(--trans-fast);
+        }
+
+        .logo-area {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .logo-area i { margin-right: 10px; }
+        .logo-text { color: white; }
+
+        .nav-menu {
+            padding: 24px 16px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #9ca3af; /* Gray 400 */
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all var(--trans-fast);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
+
+        .nav-item i { width: 24px; margin-right: 12px; font-size: 1.1em; }
+
+        /* --- Layout: Main Content --- */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Topbar */
+        .topbar {
+            height: var(--header-height);
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            flex-shrink: 0;
+        }
+
+        .page-info h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .page-info p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Fake Search Bar */
+        .search-fake {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-body);
+            border-radius: 8px;
+            padding: 8px 16px;
+            width: 250px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .search-fake i { margin-right: 8px; color: #9ca3af; }
+
+        .timestamp-badge {
+            font-size: 0.75rem;
+            background: #ecfdf5;
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            border: 1px solid var(--primary-light);
+        }
+
+        /* Scrollable Content Area */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        /* --- Section: Overview Cards (Big) --- */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .grid-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card-big {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 140px;
+            transition: transform var(--trans-fast);
+        }
+
+        .card-big:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        /* Color Variants for Icons */
+        .icon-invest { background: #eff6ff; color: #3b82f6; } /* Blue */
+        .icon-profit { background: #ecfdf5; color: #10b981; } /* Green */
+        .icon-roi    { background: #fdf4ff; color: #d946ef; } /* Fuschia */
+        .icon-sales  { background: #fff7ed; color: #f97316; } /* Orange */
+
+        .card-value-big {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+        }
+
+        .card-subtext {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        .text-accent { color: var(--primary-dark); font-weight: 500; }
+
+        /* --- Section: Funnel Cards (Small) --- */
+        .grid-funnel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card-small {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid transparent;
+        }
+
+        .card-small.border-blue { border-left-color: #3b82f6; }
+        .card-small.border-green { border-left-color: var(--primary); }
+
+        .card-small-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .card-small-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 8px;
+        }
+
+        /* --- Section: Tables Grid --- */
+        .grid-tables {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr; /* 60% / 40% split */
+            gap: 24px;
+        }
+
+        .card-table-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            max-height: 500px; /* Limit height */
+        }
+
+        .table-toolbar {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .table-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .table-scroll {
+            overflow: auto;
+            flex: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: #f9fafb;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 12px 24px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f9fafb; }
+
+        .txt-right { text-align: right; }
+        .txt-center { text-align: center; }
+        .font-bold { font-weight: 600; }
+        .text-green { color: var(--primary-dark); }
+
+        .empty-msg {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-tables { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .grid-overview { grid-template-columns: 1fr 1fr; }
+            .grid-funnel { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; } /* Mobile: Hide sidebar for simplicity as requested */
+            .topbar { padding: 0 16px; }
+            .content-scroll { padding: 16px; }
+            .grid-overview, .grid-funnel { grid-template-columns: 1fr; }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@heroicons/react/": "https://aistudiocdn.com/@heroicons/react@^2.2.0/"
+  }
+}
+</script>
+</head>
+<body>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner-ring"></div>
+        <p class="loader-text">Carregando dados...</p>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-area">
+            <span class="logo-text">DASH_INDAIA</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-users"></i> Leads & Vendas
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-robot"></i> AI Analyst
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-gear"></i> Configurações
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-circle-question"></i> Ajuda
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="page-info">
+                <h1>Dashboard de Vendas</h1>
+                <p>Visão geral dos leads e desempenho comercial</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-fake">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Pesquisar...</span>
+                </div>
+                <div class="timestamp-badge" id="lastUpdated">
+                    Atualizado: --/--/---- --:--
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Dashboard Content -->
+        <div class="content-scroll">
+            
+            <!-- 1. Visão Geral (Big Cards) -->
+            <div class="grid-overview">
+                <!-- Investimento -->
+                <div class="card-big">
+                    <div class="card-header">
+                        <span class="card-label">Investimento Total</span>
+                        <div class="card-icon-box icon-invest">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card-value-big" id="val-investimento">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- Faturamento -->
+                <div class="card-big">
+                    <div class="card-header">
+                        <span class="card-label">Faturamento</span>
+                        <div class="card-icon-box icon-profit">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card-value-big" id="val-faturamento">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- ROI -->
+                <div class="card-big">
+                    <div class="card-header">
+                        <span class="card-label">ROI</span>
+                        <div class="card-icon-box icon-roi">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card-value-big" id="val-roi">0,00</div>
+                        <div class="card-subtext text-accent" id="val-roas">ROAS: 0,00x</div>
+                    </div>
+                </div>
+
+                <!-- Vendas -->
+                <div class="card-big">
+                    <div class="card-header">
+                        <span class="card-label">Vendas</span>
+                        <div class="card-icon-box icon-sales">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card-value-big" id="val-vendas">0</div>
+                        <div class="card-subtext">Contratos fechados</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Funil (Small Cards) -->
+            <h3 class="section-title"><i class="fa-solid fa-filter"></i> Funil de Leads</h3>
+            <div class="grid-funnel">
+                <div class="card-small border-blue">
+                    <div class="card-small-label">Leads Hoje</div>
+                    <div class="card-small-value" id="val-leads-hoje">0</div>
+                </div>
+                <div class="card-small border-blue">
+                    <div class="card-small-label">Leads Período</div>
+                    <div class="card-small-value" id="val-leads-periodo">0</div>
+                </div>
+                <div class="card-small border-green">
+                    <div class="card-small-label">CPL (Custo/Lead)</div>
+                    <div class="card-small-value" id="val-cpl">R$ 0,00</div>
+                </div>
+                <div class="card-small border-green">
+                    <div class="card-small-label">CPA (Custo/Venda)</div>
+                    <div class="card-small-value" id="val-cpa">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- 3. Tables (Campanhas & Equipe) -->
+            <div class="grid-tables">
+                
+                <!-- Table: Campanhas -->
+                <div class="card-table-container">
+                    <div class="table-toolbar">
+                        <span class="table-title">Campanhas (Resumo)</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table id="tbl-campanhas">
+                            <thead>
+                                <tr>
+                                    <th>Campanha</th>
+                                    <th>Plat.</th>
+                                    <th>Leads</th>
+                                    <th>Vendas</th>
+                                    <th>Invest.</th>
+                                    <th>CPL</th>
+                                    <th>CPA</th>
+                                    <th>Tx. Conv</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS Populates -->
+                            </tbody>
+                        </table>
+                        <div id="msg-campanhas" class="empty-msg" style="display:none;">
+                            Sem dados de campanhas para o período.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table: Vendedores -->
+                <div class="card-table-container">
+                    <div class="table-toolbar">
+                        <span class="table-title">Equipe Comercial</span>
+                    </div>
+                    <div class="table-scroll">
+                        <table id="tbl-vendedores">
+                            <thead>
+                                <tr>
+                                    <th>Vendedor</th>
+                                    <th>Leads</th>
+                                    <th>Agend.</th>
+                                    <th>Vendas</th>
+                                    <th>Fat.</th>
+                                    <th>Conv.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS Populates -->
+                            </tbody>
+                        </table>
+                        <div id="msg-vendedores" class="empty-msg" style="display:none;">
+                            Sem dados dos vendedores.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- Utility Formatters ---
+        const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        const NUM = new Intl.NumberFormat('pt-BR');
+        const DEC = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const PCT = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2 });
+
+        // --- Main Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDashboard();
+        });
+
+        function mostrarSpinner(show) {
+            const el = document.getElementById('loader');
+            if(show) {
+                el.style.opacity = '1';
+                el.style.pointerEvents = 'all';
+            } else {
+                el.style.opacity = '0';
+                el.style.pointerEvents = 'none';
+            }
+        }
+
+        function atualizarTimestamp() {
+            const now = new Date();
+            const str = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+            document.getElementById('lastUpdated').textContent = 'Atualizado: ' + str;
+        }
+
+        function carregarDashboard() {
+            mostrarSpinner(true);
+
+            // Safety check for non-Apps Script environments
+            if (typeof google === 'undefined' || !google.script) {
+                console.error("Ambiente Local Detectado: google.script.run não está disponível.");
+                // We keep spinner for a moment then show error to respect "no mocks" rule strictness
+                // but avoiding indefinite spinner in dev.
+                setTimeout(() => {
+                    mostrarSpinner(false);
+                    alert("Erro: Este painel deve ser executado no ambiente do Google Apps Script.");
+                }, 1000);
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler((data) => {
+                    mostrarSpinner(false);
+                    
+                    if (!data) {
+                        alert('Nenhuma resposta do servidor.');
+                        return;
+                    }
+                    if (data.error) {
+                        alert('Erro ao carregar dados: ' + (data.message || 'Desconhecido'));
+                        return;
+                    }
+
+                    console.log('Dados Recebidos:', data);
+                    
+                    preencherCardsVisaoGeral(data);
+                    preencherCardsFunil(data);
+                    preencherTabelaCampanhas(data.kpiCampanhas || []);
+                    preencherTabelaVendedores(data.kpiVendedores || []);
+                    atualizarTimestamp();
+                })
+                .withFailureHandler((err) => {
+                    mostrarSpinner(false);
+                    alert('Falha na comunicação com o servidor: ' + err);
+                })
+                .getDashboardData();
+        }
+
+        // --- UI Populators ---
+
+        function preencherCardsVisaoGeral(data) {
+            // Investimento
+            document.getElementById('val-investimento').textContent = BRL.format(data.totalInvestimento || 0);
+            // Faturamento
+            document.getElementById('val-faturamento').textContent = BRL.format(data.faturamentoPeriodo || 0);
+            // ROI & ROAS
+            document.getElementById('val-roi').textContent = DEC.format(data.roiGlobal || 0);
+            document.getElementById('val-roas').textContent = 'ROAS: ' + DEC.format(data.roasGlobal || 0) + 'x';
+            // Vendas
+            document.getElementById('val-vendas').textContent = NUM.format(data.totalContratosPeriodo || 0);
+        }
+
+        function preencherCardsFunil(data) {
+            document.getElementById('val-leads-hoje').textContent = NUM.format(data.totalLeadsHoje || 0);
+            document.getElementById('val-leads-periodo').textContent = NUM.format(data.leadsPeriodo || 0);
+            document.getElementById('val-cpl').textContent = BRL.format(data.cplGlobal || 0);
+            document.getElementById('val-cpa').textContent = BRL.format(data.cpaGlobal || 0);
+        }
+
+        function preencherTabelaCampanhas(lista) {
+            const tbody = document.querySelector('#tbl-campanhas tbody');
+            const msgEl = document.getElementById('msg-campanhas');
+            const tblEl = document.getElementById('tbl-campanhas');
+
+            tbody.innerHTML = '';
+
+            if(!lista || lista.length === 0) {
+                tblEl.style.display = 'none';
+                msgEl.style.display = 'block';
+                return;
+            }
+            
+            tblEl.style.display = 'table';
+            msgEl.style.display = 'none';
+
+            lista.forEach(item => {
+                const tr = document.createElement('tr');
+                // Data keys: CAMPANHA, PLATAFORMA, LEADS_TOTAL, CONTRATOS, INVESTIMENTO_TOTAL, CPL, CUSTO_POR_CONTRATO, TX_FECHAMENTO
+                // Calculating explicit values if needed, but assuming backend sends them mostly ready or we format them.
+                
+                // Conversão tx handling
+                let tx = item.TX_FECHAMENTO;
+                if(typeof tx !== 'number') tx = 0;
+                // If it comes as 15.5 (percent number) vs 0.155 (fraction), handle if necessary. 
+                // Assuming standard number. If backend sends 0.15 for 15%, usage of PCT.format works.
+                // If backend sends 15 for 15%, we might need /100. Let's assume raw fraction based on generic math usually done in backend.
+                // Actually Code.gs usually does math. If it's pure calc: (vendas/leads). So likely a fraction.
+                
+                tr.innerHTML = `
+                    <td class="font-bold">${item.CAMPANHA || '-'}</td>
+                    <td>${item.PLATAFORMA || '-'}</td>
+                    <td>${NUM.format(item.LEADS_TOTAL || 0)}</td>
+                    <td>${NUM.format(item.CONTRATOS || 0)}</td>
+                    <td>${BRL.format(item.INVESTIMENTO_TOTAL || 0)}</td>
+                    <td>${BRL.format(item.CPL || 0)}</td>
+                    <td>${BRL.format(item.CUSTO_POR_CONTRATO || 0)}</td>
+                    <td class="text-green font-bold">${PCT.format(tx)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function preencherTabelaVendedores(lista) {
+            const tbody = document.querySelector('#tbl-vendedores tbody');
+            const msgEl = document.getElementById('msg-vendedores');
+            const tblEl = document.getElementById('tbl-vendedores');
+
+            tbody.innerHTML = '';
+
+            if(!lista || lista.length === 0) {
+                tblEl.style.display = 'none';
+                msgEl.style.display = 'block';
+                return;
+            }
+
+            tblEl.style.display = 'table';
+            msgEl.style.display = 'none';
+
+            lista.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                // Calc conversão if missing
+                let conv = item.TX_FECHAMENTO; 
+                if (conv === undefined || conv === null || conv === '') {
+                    const l = parseFloat(item.LEADS) || 0;
+                    const c = parseFloat(item.CONTRATOS) || 0;
+                    conv = l > 0 ? (c / l) : 0;
+                }
+
+                tr.innerHTML = `
+                    <td class="font-bold">${item.VENDEDOR || '-'}</td>
+                    <td>${NUM.format(item.LEADS || 0)}</td>
+                    <td>${NUM.format(item.AGENDADOS || 0)}</td>
+                    <td>${NUM.format(item.CONTRATOS || 0)}</td>
+                    <td>${BRL.format(item.FATURAMENTO || 0)}</td>
+                    <td class="text-green font-bold">${PCT.format(conv)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
